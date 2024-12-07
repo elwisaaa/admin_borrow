@@ -38,7 +38,6 @@ if (isset($_GET['edit_schedule'])) {
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $schedule_id);
     $stmt->execute();
-    $scheduleToEdit = $stmt->get_result()->fetch_assoc();
 }
 
 // Handle category add, update, or delete
@@ -94,36 +93,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_schedule'])) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_schedule'])) {
     $schedule_id = $_POST['schedule_id'];
+    $resource_id = $_POST['resource_id'];
     $start_time = $_POST['start_time'];
     $end_time = $_POST['end_time'];
-    $sql = "UPDATE Schedules SET StartTime = ?, EndTime = ? WHERE ScheduleID = ?";
+    $sql = "UPDATE Schedules SET ResourceID = ?, StartTime = ?, EndTime = ? WHERE ScheduleID = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssi", $start_time, $end_time, $schedule_id);
+    $stmt->bind_param("issi", $resource_id, $start_time, $end_time, $schedule_id);
     $stmt->execute();
 }
 
-// Handle deletion of categories, resources, and schedules
-if (isset($_GET['delete_category'])) {
-    $category_id = $_GET['delete_category'];
-    $sql = "DELETE FROM Categories WHERE CategoryID = ?";
+// Handle sub-admin registration
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_sub_admin'])) {
+    $username = $_POST['username'];
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $sql = "INSERT INTO Users (Username, Password, UserType) VALUES (?, ?, 'SubAdmin')";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $category_id);
-    $stmt->execute();
-}
-
-if (isset($_GET['delete_resource'])) {
-    $resource_id = $_GET['delete_resource'];
-    $sql = "DELETE FROM Resources WHERE ResourceID = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $resource_id);
-    $stmt->execute();
-}
-
-if (isset($_GET['delete_schedule'])) {
-    $schedule_id = $_GET['delete_schedule'];
-    $sql = "DELETE FROM Schedules WHERE ScheduleID = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $schedule_id);
+    $stmt->bind_param("ss", $username, $password);
     $stmt->execute();
 }
 ?>
@@ -161,17 +146,7 @@ if (isset($_GET['delete_schedule'])) {
         <form action="admin_dashboard.php" method="post">
             <input type="text" name="resource_name" value="<?php echo isset($resourceToEdit) ? $resourceToEdit['ResourceName'] : ''; ?>" placeholder="Resource Name" required>
             <textarea name="resource_description" placeholder="Resource Description" required><?php echo isset($resourceToEdit) ? $resourceToEdit['ResourceDescription'] : ''; ?></textarea>
-            <select name="category_id" required>
-                <option value="" disabled>Select Category</option>
-                <?php
-                $sql = "SELECT * FROM Categories";
-                $result = $conn->query($sql);
-                while($row = $result->fetch_assoc()) {
-                    $selected = (isset($resourceToEdit) && $resourceToEdit['CategoryID'] == $row['CategoryID']) ? 'selected' : '';
-                    echo "<option value='" . $row['CategoryID'] . "' $selected>" . $row['CategoryName'] . "</option>";
-                }
-                ?>
-            </select>
+            <input type="text" name="category_id" value="<?php echo isset($resourceToEdit) ? $resourceToEdit['CategoryID'] : ''; ?>" placeholder="Category ID" required>
             <?php if (isset($resourceToEdit)): ?>
                 <input type="hidden" name="resource_id" value="<?php echo $resourceToEdit['ResourceID']; ?>">
                 <button type="submit" name="update_resource">Update Resource</button>
@@ -183,19 +158,9 @@ if (isset($_GET['delete_schedule'])) {
         <!-- Add/Update Schedule Form -->
         <h3><?php echo isset($scheduleToEdit) ? 'Update Schedule' : 'Add Schedule'; ?></h3>
         <form action="admin_dashboard.php" method="post">
-            <select name="resource_id" required>
-                <option value="" disabled>Select Resource</option>
-                <?php
-                $sql = "SELECT * FROM Resources";
-                $result = $conn->query($sql);
-                while($row = $result->fetch_assoc()) {
-                    $selected = (isset($scheduleToEdit) && $scheduleToEdit['ResourceID'] == $row['ResourceID']) ? 'selected' : '';
-                    echo "<option value='" . $row['ResourceID'] . "' $selected>" . $row['ResourceName'] . "</option>";
-                }
-                ?>
-            </select>
-            <input type="datetime-local" name="start_time" value="<?php echo isset($scheduleToEdit) ? $scheduleToEdit['StartTime'] : ''; ?>" required>
-            <input type="datetime-local" name="end_time" value="<?php echo isset($scheduleToEdit) ? $scheduleToEdit['EndTime'] : ''; ?>" required>
+            <input type="text" name="resource_id" value="<?php echo isset($scheduleToEdit) ? $scheduleToEdit['ResourceID'] : ''; ?>" placeholder="Resource ID" required>
+            <input type="datetime-local" name="start_time" value="<?php echo isset($scheduleToEdit) ? $scheduleToEdit['StartTime'] : ''; ?>" placeholder="Start Time" required>
+            <input type="datetime-local" name="end_time" value="<?php echo isset($scheduleToEdit) ? $scheduleToEdit['EndTime'] : ''; ?>" placeholder="End Time" required>
             <?php if (isset($scheduleToEdit)): ?>
                 <input type="hidden" name="schedule_id" value="<?php echo $scheduleToEdit['ScheduleID']; ?>">
                 <button type="submit" name="update_schedule">Update Schedule</button>
@@ -204,96 +169,16 @@ if (isset($_GET['delete_schedule'])) {
             <?php endif; ?>
         </form>
 
-        <hr>
+        <!-- Add Sub-Admin Form -->
+        <h3>Add Sub-Admin</h3>
+        <form action="admin_dashboard.php" method="post">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit" name="add_sub_admin">Add Sub-Admin</button>
+        </form>
 
-        <!-- Manage Categories -->
-        <h3>Manage Categories</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Category Name</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                $sql = "SELECT * FROM Categories";
-                $result = $conn->query($sql);
-                while ($row = $result->fetch_assoc()) {
-                    echo "<tr>
-                            <td>" . $row['CategoryName'] . "</td>
-                            <td><a href='admin_dashboard.php?edit_category=" . $row['CategoryID'] . "'>Edit</a> | 
-                                <a href='admin_dashboard.php?delete_category=" . $row['CategoryID'] . "' onclick='return confirm(\"Are you sure?\")'>Delete</a></td>
-                          </tr>";
-                }
-                ?>
-            </tbody>
-        </table>
-
-        <hr>
-
-        <!-- Manage Resources -->
-        <h3>Manage Resources</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Resource Name</th>
-                    <th>Category</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                $sql = "SELECT * FROM Resources";
-                $result = $conn->query($sql);
-                while ($row = $result->fetch_assoc()) {
-                    $categorySql = "SELECT CategoryName FROM Categories WHERE CategoryID = " . $row['CategoryID'];
-                    $categoryResult = $conn->query($categorySql);
-                    $category = $categoryResult->fetch_assoc();
-                    echo "<tr>
-                            <td>" . $row['ResourceName'] . "</td>
-                            <td>" . $category['CategoryName'] . "</td>
-                            <td><a href='admin_dashboard.php?edit_resource=" . $row['ResourceID'] . "'>Edit</a> | 
-                                <a href='admin_dashboard.php?delete_resource=" . $row['ResourceID'] . "' onclick='return confirm(\"Are you sure?\")'>Delete</a></td>
-                          </tr>";
-                }
-                ?>
-            </tbody>
-        </table>
-
-        <hr>
-
-        <!-- Manage Schedules -->
-        <h3>Manage Schedules</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Resource</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                $sql = "SELECT * FROM Schedules";
-                $result = $conn->query($sql);
-                while ($row = $result->fetch_assoc()) {
-                    $resourceSql = "SELECT ResourceName FROM Resources WHERE ResourceID = " . $row['ResourceID'];
-                    $resourceResult = $conn->query($resourceSql);
-                    $resource = $resourceResult->fetch_assoc();
-                    echo "<tr>
-                            <td>" . $resource['ResourceName'] . "</td>
-                            <td>" . $row['StartTime'] . "</td>
-                            <td>" . $row['EndTime'] . "</td>
-                            <td><a href='admin_dashboard.php?edit_schedule=" . $row['ScheduleID'] . "'>Edit</a> | 
-                                <a href='admin_dashboard.php?delete_schedule=" . $row['ScheduleID'] . "' onclick='return confirm(\"Are you sure?\")'>Delete</a></td>
-                          </tr>";
-                }
-                ?>
-            </tbody>
-        </table>
-        <form action="index.php" method="post" style="text-align: center; margin-top: 20px;">
+        <!-- Logout Button -->
+        <form action="logout.php" method="post" style="text-align: center; margin-top: 20px;">
             <button type="submit" class="logout-btn">Logout</button>
         </form>
     </div>
