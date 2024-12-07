@@ -293,7 +293,7 @@ if (isset($_GET['delete_schedule'])) {
                 ?>
             </tbody>
         </table>
-
+               
     </div>
 </body>
 </html>
