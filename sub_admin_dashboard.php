@@ -213,7 +213,7 @@ include('config.php');
         } else {
             echo "<tr><td colspan='3'>No resources found</td></tr>";
         }
-        ?>
+        ?><br><br>
     </table>
     <form action="index.php" method="post" style="text-align: center; margin-top: 20px;">
             <button type="submit" class="logout-btn">Logout</button>

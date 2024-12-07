@@ -294,6 +294,7 @@ if (isset($_GET['delete_schedule'])) {
             </tbody>
         </table>
             <!-- Add Sub-Admin Form -->
+             <br><br>
         <h3>Add Sub-Admin</h3>
         <form action="admin_dashboard.php" method="post">
     <input type="text" name="username" placeholder="Username" required>
@@ -316,7 +317,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_sub_admin'])) {
     }
 }
 
-?>
+?><br><br>
         <form action="index.php" method="post" style="text-align: center; margin-top: 20px;">
             <button type="submit" class="logout-btn">Logout</button>
         </form>
