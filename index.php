@@ -44,7 +44,10 @@
         <h1>Welcome</h1>
         <h2>Please choose an option</h2>
         <h3>Log in as:</h3>
-        <!-- Rest of your HTML content -->
+        <div class="button-container">
+            <button onclick="location.href='admin_login.php'">Admin</button>
+            <button onclick="location.href='sub_admin_login.php'">Sub-Admin</button>
+        </div>
     </div>
 </body>
 </html>
