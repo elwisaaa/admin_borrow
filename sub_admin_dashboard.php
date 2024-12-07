@@ -215,8 +215,9 @@ include('config.php');
         }
         ?>
     </table>
-
-    <a href="index.php" class="logout-btn">Logout</a>
+    <form action="logout.php" method="post" style="text-align: center; margin-top: 20px;">
+            <button type="submit" class="logout-btn">Logout</button>
+        </form>
     </div>
 </body>
 </html>
