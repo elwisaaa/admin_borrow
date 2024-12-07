@@ -293,7 +293,7 @@ if (isset($_GET['delete_schedule'])) {
                 ?>
             </tbody>
         </table>
-        <form action="logout.php" method="post" style="text-align: center; margin-top: 20px;">
+        <form action="index.php" method="post" style="text-align: center; margin-top: 20px;">
             <button type="submit" class="logout-btn">Logout</button>
         </form>
     </div>
