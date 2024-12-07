@@ -175,7 +175,8 @@ if (isset($_GET['delete_schedule'])) {
             <?php if (isset($resourceToEdit)): ?>
                 <input type="hidden" name="resource_id" value="<?php echo $resourceToEdit['ResourceID']; ?>">
                 <button type="submit" name="update_resource">Update Resource</button>
-            <?php else: ?>
+            <?php else: ?><br>
+                <br>
                 <button type="submit" name="add_resource">Add Resource</button>
             <?php endif; ?>
         </form>
@@ -196,7 +197,7 @@ if (isset($_GET['delete_schedule'])) {
             </select>
             <input type="datetime-local" name="start_time" value="<?php echo isset($scheduleToEdit) ? $scheduleToEdit['StartTime'] : ''; ?>" required>
             <input type="datetime-local" name="end_time" value="<?php echo isset($scheduleToEdit) ? $scheduleToEdit['EndTime'] : ''; ?>" required>
-            <?php if (isset($scheduleToEdit)): ?>
+            <?php if (isset($scheduleToEdit)): ?><br><br>
                 <input type="hidden" name="schedule_id" value="<?php echo $scheduleToEdit['ScheduleID']; ?>">
                 <button type="submit" name="update_schedule">Update Schedule</button>
             <?php else: ?>
@@ -205,7 +206,7 @@ if (isset($_GET['delete_schedule'])) {
         </form>
 
         <hr>
-
+<br><br>
         <!-- Manage Categories -->
         <h3>Manage Categories</h3>
         <table>
@@ -231,7 +232,7 @@ if (isset($_GET['delete_schedule'])) {
         </table>
 
         <hr>
-
+<br><br>
         <!-- Manage Resources -->
         <h3>Manage Resources</h3>
         <table>
@@ -262,7 +263,7 @@ if (isset($_GET['delete_schedule'])) {
         </table>
 
         <hr>
-
+<br><br>
         <!-- Manage Schedules -->
         <h3>Manage Schedules</h3>
         <table>
