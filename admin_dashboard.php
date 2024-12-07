@@ -137,6 +137,9 @@ if (isset($_GET['delete_schedule'])) {
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
+    <div class="header">
+        <h1>Borrow Resource</h1>
+    </div>
     <div class="container">
         <h1>Welcome, <?php echo $_SESSION['username']; ?>!</h1>
         <h2>Admin Dashboard</h2>
