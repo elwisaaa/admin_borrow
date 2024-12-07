@@ -1,0 +1,52 @@
+<?php
+session_start();
+if (!isset($_SESSION['username']) || $_SESSION['usertype'] != 'Admin') {
+    header("location: admin_login.php");
+    exit();
+}
+include('config.php');
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = $_POST['username'];
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT); // Hash the password
+
+    $sql = "INSERT INTO Users (Username, Password, UserType) VALUES ('$username', '$password', 'SubAdmin')";
+    if ($conn->query($sql) === TRUE) {
+        echo "New sub-admin registered successfully";
+        header("location: admin_dashboard.php");
+    } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+
+    $conn->close();
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Sub-Admin</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Register Sub-Admin</h2>
+        <form id="register-form" action="register_sub_admin.php" method="post">
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Please enter a username" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Please enter a password" required>
+            </div>
+            <div class="signup-options">
+                <button type="submit" class="signup-btn">Register Sub-Admin</button>
+                <p>Go back to <a href="admin_dashboard.php">Dashboard</a></p>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
