@@ -13,7 +13,7 @@ include('config.php');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard</title>
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body class="bg-red-700 text-gray-100">
     <div class="container mx-auto p-6">
@@ -33,7 +33,7 @@ include('config.php');
             </thead>
             <tbody>
                 <?php
-                $sql = "SELECT r.ResourceID, r.ResourceName, r.ResourceDescription, c.CategoryName FROM resources r JOIN categories c ON r.CategoryID = c.CategoryID";
+                $sql = "SELECT r.ResourceID, r.ResourceName, r.ResourceDescription, c.CategoryName FROM Resources r JOIN Categories c ON r.CategoryID = c.CategoryID";
                 $result = $conn->query($sql);
                 if ($result->num_rows > 0) {
                     while($row = $result->fetch_assoc()) {

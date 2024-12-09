@@ -15,16 +15,19 @@ include('config.php');
     <title>Borrowing History</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
-<body>
-    <div class="container">
-        <h1>Borrowing History</h1>
-        <table>
-            <tr>
-                <th>Resource Name</th>
-                <th>Borrow Start Time</th>
-                <th>Borrow End Time</th>
-                <th>Action</th>
-            </tr>
+<body class="bg-red-700 text-gray-100">
+    <div class="container mx-auto p-6">
+        <h1 class="text-4xl mb-6">Borrowing History</h1>
+        <table class="w-full bg-gray-100 text-red-700 border border-red-700 rounded-lg mb-6">
+            <thead>
+                <tr>
+                    <th class="p-2 border border-red-700">Resource Name</th>
+                    <th class="p-2 border border-red-700">Borrow Start Time</th>
+                    <th class="p-2 border border-red-700">Borrow End Time</th>
+                    <th class="p-2 border border-red-700">Action</th>
+                </tr>
+            </thead>
+            <tbody>
             <?php
             $userid = $_SESSION['userid'];
             $sql = "SELECT b.BorrowingID, r.ResourceName, b.BorrowStartTime, b.BorrowEndTime 
@@ -35,25 +38,28 @@ include('config.php');
             if ($result->num_rows > 0) {
                 while($row = $result->fetch_assoc()) {
                     echo "<tr>";
-                    echo "<td>" . $row['ResourceName'] . "</td>";
-                    echo "<td>" . $row['BorrowStartTime'] . "</td>";
-                    echo "<td>" . $row['BorrowEndTime'] . "</td>";
-                    echo "<td><form action='return_resource.php' method='post' style='display:inline;'>
+                    echo "<td class='p-2 border border-red-700'>" . $row['ResourceName'] . "</td>";
+                    echo "<td class='p-2 border border-red-700'>" . $row['BorrowStartTime'] . "</td>";
+                    echo "<td class='p-2 border border-red-700'>" . $row['BorrowEndTime'] . "</td>";
+                    echo "<td class='p-2 border border-red-700'><form action='return_resource.php' method='post' style='display:inline;'>
                               <input type='hidden' name='borrowing_id' value='" . $row['BorrowingID'] . "'>
-                              <button type='submit'>Return</button>
+                              <button type='submit' class='bg-red-600 text-gray-100 py-1 px-3 rounded-lg hover:bg-red-700'>Return</button>
                           </form></td>";
                     echo "</tr>";
                 }
             } else {
-                echo "<tr><td colspan='4'>No borrowing history found</td></tr>";
+                echo "<tr><td colspan='4' class='p-2 text-center'>No borrowing history found</td></tr>";
             }
             ?>
+            </tbody>
         </table>
 
         <!-- Back to Dashboard Button -->
-        <form action="student_dashboard.php" method="post" style="text-align: center; margin-top: 20px;">
-            <button type="submit" class="back-btn">Back to Dashboard</button>
-        </form>
+        <div class="text-center">
+            <form action="student_dashboard.php" method="post">
+                <button type="submit" class="bg-gray-200 text-red-700 py-2 px-4 rounded-lg hover:bg-gray-300">Back to Dashboard</button>
+            </form>
+        </div>
     </div>
 </body>
 </html>
