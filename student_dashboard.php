@@ -28,12 +28,17 @@ include('config.php');
                     <th class="p-2 border border-red-700">Resource Name</th>
                     <th class="p-2 border border-red-700">Description</th>
                     <th class="p-2 border border-red-700">Category</th>
+                    <th class="p-2 border border-red-700">Start Time</th>
+                    <th class="p-2 border border-red-700">End Time</th>
                     <th class="p-2 border border-red-700">Action</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
-                $sql = "SELECT r.ResourceID, r.ResourceName, r.ResourceDescription, c.CategoryName FROM Resources r JOIN Categories c ON r.CategoryID = c.CategoryID";
+                $sql = "SELECT r.ResourceID, r.ResourceName, r.ResourceDescription, c.CategoryName, s.StartTime, s.EndTime 
+                        FROM Resources r 
+                        JOIN Categories c ON r.CategoryID = c.CategoryID 
+                        JOIN Schedules s ON r.ResourceID = s.ResourceID";
                 $result = $conn->query($sql);
                 if ($result->num_rows > 0) {
                     while($row = $result->fetch_assoc()) {
@@ -41,18 +46,20 @@ include('config.php');
                         echo "<td class='p-2 border border-red-700'>" . $row['ResourceName'] . "</td>";
                         echo "<td class='p-2 border border-red-700'>" . $row['ResourceDescription'] . "</td>";
                         echo "<td class='p-2 border border-red-700'>" . $row['CategoryName'] . "</td>";
+                        echo "<td class='p-2 border border-red-700'>" . $row['StartTime'] . "</td>";
+                        echo "<td class='p-2 border border-red-700'>" . $row['EndTime'] . "</td>";
                         echo "<td class='p-2 border border-red-700'>
-                                <form action='borrow_resource.php' method='post' class='inline'>
+                                <form action='reserve_resource.php' method='post' class='inline'>
                                     <input type='hidden' name='resource_id' value='" . $row['ResourceID'] . "'>
-                                    <input type='datetime-local' name='borrow_start_time' class='mr-2 p-1 border border-red-700 rounded' required>
-                                    <input type='datetime-local' name='borrow_end_time' class='mr-2 p-1 border border-red-700 rounded' required>
+                                    <input type='hidden' name='start_time' value='" . $row['StartTime'] . "'>
+                                    <input type='hidden' name='end_time' value='" . $row['EndTime'] . "'>
                                     <button type='submit' class='bg-red-600 text-gray-100 py-1 px-3 rounded-lg hover:bg-red-700'>Reserve</button>
                                 </form>
                               </td>";
                         echo "</tr>";
                     }
                 } else {
-                    echo "<tr><td colspan='4' class='p-2 text-center'>No resources available</td></tr>";
+                    echo "<tr><td colspan='6' class='p-2 text-center'>No resources available</td></tr>";
                 }
                 ?>
             </tbody>
