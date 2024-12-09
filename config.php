@@ -2,7 +2,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "resource_management";
+$dbname = "borrow_resource";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
