@@ -69,11 +69,12 @@ INSERT INTO `schedules` (`ScheduleID`, `ResourceID`, `StartTime`, `EndTime`) VAL
 -- Table structure for table `users`
 --
 
-CREATE TABLE `users` (
-  `UserID` int(11) NOT NULL,
-  `Username` varchar(50) NOT NULL,
-  `Password` varchar(100) NOT NULL,
-  `UserType` enum('Admin','SubAdmin','Student','Teacher') NOT NULL
+CREATE TABLE `Users` (
+  `UserID` int(11) NOT NULL AUTO_INCREMENT,
+  `Username` varchar(255) NOT NULL,
+  `Password` varchar(255) NOT NULL,
+  `UserType` varchar(50) NOT NULL,
+  PRIMARY KEY (`UserID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
