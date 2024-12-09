@@ -1,19 +1,22 @@
 <?php
 session_start();
-if (!isset($_SESSION['username']) || $_SESSION['usertype'] != 'Admin') {
-    header("location: admin_login.php");
+if (!isset($_SESSION['username']) || $_SESSION['usertype'] != 'Student') {
+    header("location: student_login.php");
     exit();
 }
 include('config.php');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $borrowing_id = $_POST['borrowing_id'];
+    $user_id = $_SESSION['userid'];
+    $resource_id = $_POST['resource_id'];
+    $start_time = $_POST['start_time'];
+    $end_time = $_POST['end_time'];
 
-    $sql = "UPDATE Borrowings SET Status = 'Returned' WHERE BorrowingID = ?";
+    $sql = "INSERT INTO Borrowings (UserID, ResourceID, BorrowStartTime, BorrowEndTime, Status) VALUES (?, ?, ?, ?, 'Reserved')";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $borrowing_id);
+    $stmt->bind_param("iiss", $user_id, $resource_id, $start_time, $end_time);
     if ($stmt->execute()) {
-        header("location: admin_dashboard.php");
+        header("location: student_dashboard.php");
     } else {
         echo "Error: " . $stmt->error;
     }
