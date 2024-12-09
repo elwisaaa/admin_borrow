@@ -8,10 +8,12 @@ include('config.php');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $borrowing_id = $_POST['borrowing_id'];
+    $start_time = $_POST['start_time'];
+    $end_time = $_POST['end_time'];
 
-    $sql = "UPDATE Borrowings SET Status = 'Available' WHERE BorrowingID = ?";
+    $sql = "UPDATE Borrowings SET BorrowStartTime = ?, BorrowEndTime = ?, Status = 'Available' WHERE BorrowingID = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $borrowing_id);
+    $stmt->bind_param("ssi", $start_time, $end_time, $borrowing_id);
     if ($stmt->execute()) {
         header("location: admin_dashboard.php");
     } else {

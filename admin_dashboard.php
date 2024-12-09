@@ -387,11 +387,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_sub_admin'])) {
                 echo "<tr>";
                 echo "<td>" . $row['ResourceName'] . "</td>";
                 echo "<td>" . $row['Username'] . "</td>";
-                echo "<td>" . $row['BorrowStartTime'] . "</td>";
-                echo "<td>" . $row['BorrowEndTime'] . "</td>";
-                echo "<td>" . $row['Status'] . "</td>";
                 echo "<td>
                         <form action='confirm_pending.php' method='post' style='display:inline;'>
+                            <input type='datetime-local' name='start_time' value='" . $row['BorrowStartTime'] . "' required>
+                      </td>";
+                echo "<td>
+                            <input type='datetime-local' name='end_time' value='" . $row['BorrowEndTime'] . "' required>
+                      </td>";
+                echo "<td>" . $row['Status'] . "</td>";
+                echo "<td>
                             <input type='hidden' name='borrowing_id' value='" . $row['BorrowingID'] . "'>
                             <button type='submit'>Confirm</button>
                         </form>
