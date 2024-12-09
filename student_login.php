@@ -5,6 +5,36 @@ if (!isset($_SESSION['username']) || $_SESSION['usertype'] != 'Student') {
     exit();
 }
 include('config.php');
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    $sql = "SELECT * FROM Users WHERE Username = ? AND UserType = 'Student'";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        if (password_verify($password, $row['Password'])) {
+            $_SESSION['username'] = $username;
+            $_SESSION['usertype'] = 'Student';
+            $_SESSION['userid'] = $row['UserID'];
+            header("location: student_dashboard.php");
+            exit();
+        } else {
+            echo "Invalid Password";
+        }
+    } else {
+        echo "Invalid Username";
+    }
+
+    $stmt->close();
+}
+
+$conn->close();
 ?>
 
 <!DOCTYPE html>
