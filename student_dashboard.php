@@ -38,7 +38,9 @@ include('config.php');
                 $sql = "SELECT r.ResourceID, r.ResourceName, r.ResourceDescription, c.CategoryName, s.StartTime, s.EndTime 
                         FROM Resources r 
                         JOIN Categories c ON r.CategoryID = c.CategoryID 
-                        JOIN Schedules s ON r.ResourceID = s.ResourceID";
+                        JOIN Schedules s ON r.ResourceID = s.ResourceID
+                        LEFT JOIN Borrowings b ON r.ResourceID = b.ResourceID AND b.Status = 'Reserved'
+                        WHERE b.ResourceID IS NULL";
                 $result = $conn->query($sql);
                 if ($result->num_rows > 0) {
                     while($row = $result->fetch_assoc()) {
