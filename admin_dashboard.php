@@ -319,6 +319,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_sub_admin'])) {
 }
 
 ?><br><br>
+        <!-- Reserved Resources Table -->
+<h3>Reserved Resources</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Resource Name</th>
+            <th>Student Name</th>
+            <th>Borrow Start Time</th>
+            <th>Borrow End Time</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        $sql = "SELECT b.BorrowingID, r.ResourceName, u.Username, b.BorrowStartTime, b.BorrowEndTime 
+                FROM Borrowings b 
+                JOIN Resources r ON b.ResourceID = r.ResourceID 
+                JOIN Users u ON b.UserID = u.UserID 
+                WHERE b.Status = 'Reserved'";
+        $result = $conn->query($sql);
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                echo "<tr>";
+                echo "<td>" . $row['ResourceName'] . "</td>";
+                echo "<td>" . $row['Username'] . "</td>";
+                echo "<td>" . $row['BorrowStartTime'] . "</td>";
+                echo "<td>" . $row['BorrowEndTime'] . "</td>";
+                echo "<td>
+                        <form action='confirm_return.php' method='post' style='display:inline;'>
+                            <input type='hidden' name='borrowing_id' value='" . $row['BorrowingID'] . "'>
+                            <button type='submit'>Confirm Return</button>
+                        </form>
+                      </td>";
+                echo "</tr>";
+            }
+        } else {
+            echo "<tr><td colspan='5'>No reserved resources</td></tr>";
+        }
+        ?>
+    </tbody>
+</table>
         <form action="index.php" method="post" style="text-align: center; margin-top: 20px;">
             <button type="submit" class="logout-btn">Logout</button>
         </form>
