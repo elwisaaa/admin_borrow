@@ -20,51 +20,40 @@ include('config.php');
         <h1>Welcome, <?php echo $_SESSION['username']; ?>!</h1>
         <h2>Student Dashboard</h2>
 
-        <!-- Borrow Resource Form -->
-        <h3>Borrow Resource</h3>
-        <form action="borrow_resource.php" method="post">
-            <select name="resource_id" required>
-                <option value="" disabled selected>Select Resource</option>
-                <?php
-                $sql = "SELECT * FROM Resources";
-                $result = $conn->query($sql);
-                if ($result->num_rows > 0) {
-                    while($row = $result->fetch_assoc()) {
-                        echo "<option value='" . $row['ResourceID'] . "'>" . $row['ResourceName'] . "</option>";
-                    }
-                }
-                ?>
-            </select>
-            <input type="datetime-local" name="borrow_start_time" required>
-            <input type="datetime-local" name="borrow_end_time" required>
-            <button type="submit">Borrow Resource</button>
-        </form>
-
-        <!-- Borrowing History -->
-        <h3>Borrowing History</h3>
+        <!-- Resources Table -->
+        <h3>Available Resources</h3>
         <table>
             <tr>
                 <th>Resource Name</th>
-                <th>Borrow Start Time</th>
-                <th>Borrow End Time</th>
+                <th>Description</th>
+                <th>Action</th>
             </tr>
             <?php
-            $userid = $_SESSION['userid'];
-            $sql = "SELECT r.ResourceName, b.BorrowStartTime, b.BorrowEndTime FROM Borrowings b JOIN Resources r ON b.ResourceID = r.ResourceID WHERE b.UserID = $userid";
+            $sql = "SELECT * FROM Resources";
             $result = $conn->query($sql);
             if ($result->num_rows > 0) {
                 while($row = $result->fetch_assoc()) {
                     echo "<tr>";
                     echo "<td>" . $row['ResourceName'] . "</td>";
-                    echo "<td>" . $row['BorrowStartTime'] . "</td>";
-                    echo "<td>" . $row['BorrowEndTime'] . "</td>";
+                    echo "<td>" . $row['ResourceDescription'] . "</td>";
+                    echo "<td><form action='borrow_resource.php' method='post' style='display:inline;'>
+                              <input type='hidden' name='resource_id' value='" . $row['ResourceID'] . "'>
+                              <input type='datetime-local' name='borrow_start_time' required>
+                              <input type='datetime-local' name='borrow_end_time' required>
+                              <button type='submit'>Reserve</button>
+                          </form></td>";
                     echo "</tr>";
                 }
             } else {
-                echo "<tr><td colspan='3'>No borrowing history found</td></tr>";
+                echo "<tr><td colspan='3'>No resources available</td></tr>";
             }
             ?>
         </table>
+
+        <!-- Borrowing History Button -->
+        <form action="view_history.php" method="post" style="text-align: center; margin-top: 20px;">
+            <button type="submit" class="history-btn">View Borrowing History</button>
+        </form>
 
         <!-- Logout Button -->
         <form action="logout.php" method="post" style="text-align: center; margin-top: 20px;">
